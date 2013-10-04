@@ -95,14 +95,14 @@
 		08860F3017FF751700C9916A /* NBTMeister */ = {
 			isa = PBXGroup;
 			children = (
-				08860FD217FF764F00C9916A /* config.h */,
-				08860FD317FF764F00C9916A /* fixedendian.h */,
-				08860FD417FF764F00C9916A /* libs */,
-				08860FFF17FF764F00C9916A /* main.cpp */,
-				0886100017FF764F00C9916A /* make_unique.h */,
 				0886100117FF764F00C9916A /* NBT.txt */,
+				08860FFF17FF764F00C9916A /* main.cpp */,
+				08860FD217FF764F00C9916A /* config.h */,
+				0886100017FF764F00C9916A /* make_unique.h */,
+				08860FD317FF764F00C9916A /* fixedendian.h */,
 				0886100217FF764F00C9916A /* tags */,
 				0886100817FF764F00C9916A /* tests */,
+				08860FD417FF764F00C9916A /* libs */,
 			);
 			path = NBTMeister;
 			sourceTree = "<group>";
