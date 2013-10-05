@@ -31,11 +31,11 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "config.h"
-#include "fixedendian.h"
+#include "../config.h"
+#include "../fixedendian.h"
+#include "../libs/ttl/var/variant.hpp"
 #include "Tag.h"
 #include "TagTypes.h"
-#include "../libs/ttl/var/variant.hpp"
 
 using namespace std;
 namespace var = ttl::var;
