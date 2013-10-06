@@ -63,6 +63,13 @@ typedef var::variant<
 #define SINGLE_FLOAT(v) LittleEndian<float>(v)
 #define SINGLE_DOUBLE(v) LittleEndian<double>(v)
 
+#define SINGLE_GETBYTE LittleEndian<int8_t>
+#define SINGLE_GETSHORT LittleEndian<int16_t>
+#define SINGLE_GETINT LittleEndian<int32_t>
+#define SINGLE_GETLONG LittleEndian<int64_t>
+#define SINGLE_GETFLOAT LittleEndian<float>
+#define SINGLE_GETDOUBLE LittleEndian<double>
+
 #else
 typedef var::variant<
 	int8_t,				// 0- TagTypeByte
@@ -82,6 +89,13 @@ typedef var::variant<
 #define SINGLE_LONG(v) static_cast<int64_t>(v)
 #define SINGLE_FLOAT(v) static_cast<float>(v)
 #define SINGLE_DOUBLE(v) static_cast<double>(v)
+
+#define SINGLE_GETBYTE int8_t
+#define SINGLE_GETSHORT int16_t
+#define SINGLE_GETINT int32_t
+#define SINGLE_GETLONG int64_t
+#define SINGLE_GETFLOAT float
+#define SINGLE_GETDOUBLE double
 
 #endif
 
@@ -191,6 +205,17 @@ class Single : public Tag {
 			}
 			return TagTypeEnd; // should not happen, may want to throw an exception
 		}
+	
+		// a block of getters that will convert automatically the payload to an acceptable format
+		const SINGLE_GETBYTE &toByte() { return get<SINGLE_GETBYTE>(m_payload); }
+		const SINGLE_GETSHORT &toShort() { return get<SINGLE_GETSHORT>(m_payload); }
+		const SINGLE_GETINT &toInt() { return get<SINGLE_GETINT>(m_payload); }
+		const SINGLE_GETLONG &toLong() { return get<SINGLE_GETLONG>(m_payload); }
+		const SINGLE_GETFLOAT &toFloat() { return get<SINGLE_GETFLOAT>(m_payload); }
+		const SINGLE_GETDOUBLE &toDouble() { return get<SINGLE_GETDOUBLE>(m_payload); }
+		const vector<SINGLE_GETBYTE> &toByteArray() { return get<vector<SINGLE_GETBYTE>>(m_payload); }
+		const vector<SINGLE_GETINT> &toIntArray() { return get<vector<SINGLE_GETINT>>(m_payload); }
+		const string &toString() { return get<string>(m_payload); }
 	
 	
 	//************
