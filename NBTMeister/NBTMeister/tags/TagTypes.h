@@ -47,8 +47,8 @@ enum TagType {
 	TagTypeDouble		= 6,
 	TagTypeByteArray	= 7,
 	TagTypeString		= 8,
-//	TagTypeList			= 9,	// No arrays because these will be a complete other object
-//	TagTypeCompound		= 10,	// Indeed, tags can be separated into 2 categories : singles and arrays
+	TagTypeList			= 9,
+	TagTypeCompound		= 10,
 	TagTypeIntArray		= 11,
 	TagTypeCount				// the number of tag types
 };
