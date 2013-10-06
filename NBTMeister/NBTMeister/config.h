@@ -43,7 +43,7 @@
 #endif
 
 
-/* Allow/Disallow the use of LittleEndian objects in 'Single' tags */
+/* Allow/Disallow the use of FixedEndian objects */
 #define NBTMEISTER_FORCE_LITTLE_ENDIAN
 
 #endif
