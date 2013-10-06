@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		083D759917FF9FC8009FC03F /* libz.1.2.8.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 083D759817FF9FC8009FC03F /* libz.1.2.8.dylib */; };
+		083D75A0180065CE009FC03F /* zfstream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083D759E17FFA31D009FC03F /* zfstream.cpp */; };
 		0886100B17FF76FC00C9916A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08860FFF17FF764F00C9916A /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +25,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0802E6101800803600E21728 /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
+		083D759817FF9FC8009FC03F /* libz.1.2.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.8.dylib; path = ../../../../../../usr/local/lib/libz.1.2.8.dylib; sourceTree = "<group>"; };
+		083D759E17FFA31D009FC03F /* zfstream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = zfstream.cpp; sourceTree = "<group>"; };
+		083D759F17FFA31D009FC03F /* zfstream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zfstream.h; sourceTree = "<group>"; };
 		08860F2E17FF751700C9916A /* NBTMeister */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NBTMeister; sourceTree = BUILT_PRODUCTS_DIR; };
 		08860FD217FF764F00C9916A /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		08860FD317FF764F00C9916A /* fixedendian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fixedendian.h; sourceTree = "<group>"; };
@@ -61,7 +67,6 @@
 		0886100017FF764F00C9916A /* make_unique.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = make_unique.h; sourceTree = "<group>"; };
 		0886100117FF764F00C9916A /* NBT.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = NBT.txt; sourceTree = "<group>"; };
 		0886100317FF764F00C9916A /* Array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
-		0886100417FF764F00C9916A /* AutoTree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutoTree.h; sourceTree = "<group>"; };
 		0886100517FF764F00C9916A /* Single.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Single.h; sourceTree = "<group>"; };
 		0886100617FF764F00C9916A /* Tag.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tag.h; sourceTree = "<group>"; };
 		0886100717FF764F00C9916A /* TagTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagTypes.h; sourceTree = "<group>"; };
@@ -74,16 +79,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				083D759917FF9FC8009FC03F /* libz.1.2.8.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0802E60F18007FB000E21728 /* tree-op */ = {
+			isa = PBXGroup;
+			children = (
+				0802E6101800803600E21728 /* Parser.h */,
+			);
+			path = "tree-op";
+			sourceTree = "<group>";
+		};
+		083D759D17FFA31D009FC03F /* zlib-contrib */ = {
+			isa = PBXGroup;
+			children = (
+				083D759E17FFA31D009FC03F /* zfstream.cpp */,
+				083D759F17FFA31D009FC03F /* zfstream.h */,
+			);
+			path = "zlib-contrib";
+			sourceTree = "<group>";
+		};
 		08860F2517FF751700C9916A = {
 			isa = PBXGroup;
 			children = (
 				08860F3017FF751700C9916A /* NBTMeister */,
+				083D759817FF9FC8009FC03F /* libz.1.2.8.dylib */,
 				08860F2F17FF751700C9916A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -104,6 +128,7 @@
 				08860FD217FF764F00C9916A /* config.h */,
 				0886100017FF764F00C9916A /* make_unique.h */,
 				08860FD317FF764F00C9916A /* fixedendian.h */,
+				0802E60F18007FB000E21728 /* tree-op */,
 				0886100217FF764F00C9916A /* tags */,
 				0886100817FF764F00C9916A /* tests */,
 				08860FD417FF764F00C9916A /* libs */,
@@ -114,6 +139,7 @@
 		08860FD417FF764F00C9916A /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				083D759D17FFA31D009FC03F /* zlib-contrib */,
 				08860FD517FF764F00C9916A /* ttl */,
 			);
 			path = libs;
@@ -240,11 +266,10 @@
 		0886100217FF764F00C9916A /* tags */ = {
 			isa = PBXGroup;
 			children = (
-				0886100317FF764F00C9916A /* Array.h */,
-				0886100417FF764F00C9916A /* AutoTree.h */,
-				0886100517FF764F00C9916A /* Single.h */,
-				0886100617FF764F00C9916A /* Tag.h */,
 				0886100717FF764F00C9916A /* TagTypes.h */,
+				0886100617FF764F00C9916A /* Tag.h */,
+				0886100517FF764F00C9916A /* Single.h */,
+				0886100317FF764F00C9916A /* Array.h */,
 			);
 			path = tags;
 			sourceTree = "<group>";
@@ -310,6 +335,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0886100B17FF76FC00C9916A /* main.cpp in Sources */,
+				083D75A0180065CE009FC03F /* zfstream.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +404,7 @@
 		08860F3817FF751700C9916A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -385,6 +412,7 @@
 		08860F3917FF751700C9916A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

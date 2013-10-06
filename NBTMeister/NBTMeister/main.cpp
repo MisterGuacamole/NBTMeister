@@ -26,26 +26,53 @@
  */
 
 #include <iostream>
-#include <sstream>
-#include "Single.h"
-#include "Array.h"
+#include "tags/Single.h"
+#include "tags/Array.h"
+#include "tree-op/Parser.h"
+#include "libs/zlib-contrib/zfstream.h"
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
 	
-	cout << sizeof(Array) << endl;
+	cout << "Test zlib...\nDecompressing file..." << endl;
 	
-	Array test3("banane");
-	test3.addTag(new Single("wol1", SINGLE_BYTE(12)));
-	test3.addTag(new Single("wol2", SINGLE_INT(43782)));
-	cout << test3.size() << endl;
+	gzofstream outf;
+	gzifstream inf;
 	
-	while (Tag *t = test3.nextTag()) {
-		cout << "Type for " << t->name() << " = " << static_cast<Single *>(t)->tagType() << endl;
+	std::cout << "\nReading 'test.nbt' (buffered) produces:\n";
+	inf.open("../../NBTMeister/tests/test.nbt", ios::binary);
+	if (!inf.is_open()) {
+		cout << "Cannot open file" << endl;
+		return 0;
 	}
 	
-	cout << "sizeof test3 = " << sizeof(test3) << endl;
+	const unsigned int chunkSize = 35;
+	
+	memblock collectedData(chunkSize);
+	inf.read(&collectedData[0], chunkSize);
+	inf.close();
+	
+	for (int i = 0; i < chunkSize; i++) {
+		cout << (int)collectedData[i];
+	}
+	cout << "\n***\n\n" << endl;
+	
+	// ---------------------------------
+	cout << "Building tree..." << flush;
+	Parser parser;
+	Tag *tree = parser.build(collectedData.begin(), collectedData.end());
+	
+	cout << "\n" << endl;
+	
+	if (parser.status() != parser_status::good)
+		cerr << "\n[Error] parser error #" << parser.status() << endl;
+	else
+		static_cast<Array *>(tree)->print();
+	
+	cout << endl;
+	
+	delete tree;
 	
     return 0;
 }
