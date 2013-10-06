@@ -32,6 +32,11 @@
 #include <algorithm>
 #include "Tag.h"
 
+enum ArrayType {
+	List,
+	Compound
+};
+
 /*
  ------------------------------------------------------
  ------------------------------------------------------
@@ -65,7 +70,7 @@
 class Array : public Tag, private vector<Tag *> {
 	
 	public:
-		Array(const string &name) : Tag(TagQualificator::QArray, name) { m_currPtr = begin(); }
+		Array(const string &name, ArrayType atype) : Tag(TagQualificator::QArray, name), m_arrayType(atype) { m_currPtr = begin(); }
 		~Array() {
 			for (Tag *t : *this) { // the delete operation may trigger other delete operations in inner tags
 				cout << "[array] delete " << t->name() << endl;
@@ -129,6 +134,71 @@ class Array : public Tag, private vector<Tag *> {
 			m_currPtr = pos;
 		}
 	
+		ArrayType arrayType() { return m_arrayType; }
+	
+		// debug method. will print its hierarchy
+		// WORST CODE I HAVE EVER WRITTEN. THIS IS DISGUSTING. THIS IS FOR DEBUGGING ONLY. YUK. DISGUSTING.
+		void print(int lvl = 0) {
+			
+			string myType;
+			switch (arrayType()) {
+				case List:
+					myType = "List";
+					break;
+				default: myType = "Compound";
+			}
+			
+			cout << myType << "(\"" << name() << "\"): " << size() << " entries\n{\n" << flush;
+			
+			for (Tag *t : *this) {
+				
+				for (int i = 0; i <= lvl; i++)
+					cout << "\t" << flush;
+				
+				if (t->qualificator() == TagQualificator::QSingle) {
+					switch (static_cast<Single *>(t)->tagType()) {
+						case TagTypeByte:
+							cout << "Byte(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toByte() << endl;
+							break;
+						case TagTypeShort:
+							cout << "Short(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toShort() << endl;
+							break;
+						case TagTypeInt:
+							cout << "Int(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toInt() << endl;
+							break;
+						case TagTypeLong:
+							cout << "Long(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toLong() << endl;
+							break;
+						case TagTypeFloat:
+							cout << "Float(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toFloat() << endl;
+							break;
+						case TagTypeDouble:
+							cout << "Double(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toDouble() << endl;
+							break;
+						case TagTypeByteArray:
+							cout << "ByteArray(\"" << t->name() << "\"): " << flush;
+							for (int i = 0; i < static_cast<Single *>(t)->toByteArray().size() - 1; i++)
+								cout << static_cast<Single *>(t)->toByteArray()[i] << ", " << flush;
+							cout << static_cast<Single *>(t)->toByteArray()[static_cast<Single *>(t)->toByteArray().size() - 1] << endl;
+							break;
+						case TagTypeIntArray:
+							cout << "IntArray(\"" << t->name() << "\"): " << flush;
+							for (int i = 0; i < static_cast<Single *>(t)->toIntArray().size() - 1; i++)
+								cout << static_cast<Single *>(t)->toIntArray()[i] << ", " << flush;
+							cout << static_cast<Single *>(t)->toIntArray()[static_cast<Single *>(t)->toIntArray().size() - 1] << endl;
+							break;
+						case TagTypeString:
+							cout << "String(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toString() << endl;
+							break;
+						default: break;
+					}
+				}
+				else static_cast<Array *>(t)->print(lvl + 1);
+			}
+			
+			cout << "}" << endl;
+		}
+	
 	
 		// ----------------------------------------
 		// Simple getters
@@ -138,6 +208,7 @@ class Array : public Tag, private vector<Tag *> {
 	
 	
 	private:
+		ArrayType m_arrayType;
 		iterator m_currPtr; // used in next() function, this pointer is used to act like a seek pointer
 	
 		// this function will check if the m_currPtr pointer has been modified
