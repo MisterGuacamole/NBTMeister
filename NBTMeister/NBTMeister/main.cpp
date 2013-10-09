@@ -41,20 +41,20 @@ int main(int argc, const char * argv[]) {
 	gzifstream inf;
 	
 	std::cout << "\nReading 'test.nbt' (buffered) produces:\n";
-	inf.open("../../NBTMeister/tests/test.nbt", ios::binary);
+	inf.open("../../NBTMeister/tests/bigtest.nbt", ios::binary);
 	if (!inf.is_open()) {
 		cout << "Cannot open file" << endl;
 		return 0;
 	}
 	
-	const unsigned int chunkSize = 35;
+	const unsigned int chunkSize = 2048;
 	
 	memblock collectedData(chunkSize);
 	inf.read(&collectedData[0], chunkSize);
 	inf.close();
 	
 	for (int i = 0; i < chunkSize; i++) {
-		cout << (int)collectedData[i];
+		cout << (unsigned int)collectedData[i];
 	}
 	cout << "\n***\n\n" << endl;
 	
@@ -66,12 +66,9 @@ int main(int argc, const char * argv[]) {
 	cout << "\n" << endl;
 	
 	if (parser.status() != parser_status::good)
-		cerr << "\n[Error] parser error #" << parser.status() << endl;
-	else
-		static_cast<Array *>(tree)->print();
+		cerr << "\n[Error] parser error 0x" << parser.status() << endl;
 	
-	cout << endl;
-	
+	static_cast<Array *>(tree)->print();
 	delete tree;
 	
     return 0;

@@ -84,7 +84,7 @@ class FixedEndian {
 			m.rep = 0;
 		}
 		
-		FixedEndian &operator=(FixedEndian &&m) const {
+		FixedEndian &operator=(FixedEndian &&m) {
 			rep = m.rep;
 			m.rep = 0;
 			return *this;

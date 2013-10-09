@@ -70,12 +70,14 @@ enum ArrayType {
 class Array : public Tag, private vector<Tag *> {
 	
 	public:
-		Array(const string &name, ArrayType atype) : Tag(TagQualificator::QArray, name), m_arrayType(atype) { m_currPtr = begin(); }
+		Array(const string &name, ArrayType atype, TagType listType = TagTypeInvalid) :
+		Tag(TagQualificator::QArray, name), m_arrayType(atype), m_listType(listType) {
+			m_currPtr = begin();
+		}
+		
 		~Array() {
-			for (Tag *t : *this) { // the delete operation may trigger other delete operations in inner tags
-				cout << "[array] delete " << t->name() << endl;
+			for (Tag *t : *this) // the delete operation may trigger other delete operations in inner tags
 				delete t;
-			}
 		}
 		
 	
@@ -134,10 +136,7 @@ class Array : public Tag, private vector<Tag *> {
 			m_currPtr = pos;
 		}
 	
-		ArrayType arrayType() { return m_arrayType; }
-	
 		// debug method. will print its hierarchy
-		// WORST CODE I HAVE EVER WRITTEN. THIS IS DISGUSTING. THIS IS FOR DEBUGGING ONLY. YUK. DISGUSTING.
 		void print(int lvl = 0) {
 			
 			string myType;
@@ -148,7 +147,29 @@ class Array : public Tag, private vector<Tag *> {
 				default: myType = "Compound";
 			}
 			
-			cout << myType << "(\"" << name() << "\"): " << size() << " entries\n{\n" << flush;
+			cout << myType << "(\"" << name() << "\"): " << size() << " entries" << flush;
+			if (arrayType() == List) {
+				cout << " of type ";
+				switch (m_listType) {
+					case TagTypeByte: cout << "Byte" << flush; break;
+					case TagTypeShort: cout << "Short" << flush; break;
+					case TagTypeInt: cout << "Int" << flush; break;
+					case TagTypeLong: cout << "Long" << flush; break;
+					case TagTypeFloat: cout << "Float" << flush; break;
+					case TagTypeDouble: cout << "Double" << flush; break;
+					case TagTypeByteArray: cout << "ByteArray" << flush; break;
+					case TagTypeIntArray: cout << "IntArray" << flush; break;
+					case TagTypeString: cout << "String" << flush; break;
+					case TagTypeList: cout << "List" << flush; break;
+					case TagTypeCompound: cout << "Compound" << flush; break;
+					default: cout << "Invalid" << flush; break;
+				}
+			}
+			cout << endl;
+			
+			for (int i = 0; i < lvl; i++)
+				cout << "\t" << flush;
+			cout << "{\n" << flush;
 			
 			for (Tag *t : *this) {
 				
@@ -158,7 +179,7 @@ class Array : public Tag, private vector<Tag *> {
 				if (t->qualificator() == TagQualificator::QSingle) {
 					switch (static_cast<Single *>(t)->tagType()) {
 						case TagTypeByte:
-							cout << "Byte(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toByte() << endl;
+							cout << "Byte(\"" << t->name() << "\"): " << (int)static_cast<Single *>(t)->toByte() << endl;
 							break;
 						case TagTypeShort:
 							cout << "Short(\"" << t->name() << "\"): " << static_cast<Single *>(t)->toShort() << endl;
@@ -178,7 +199,7 @@ class Array : public Tag, private vector<Tag *> {
 						case TagTypeByteArray:
 							cout << "ByteArray(\"" << t->name() << "\"): " << flush;
 							for (int i = 0; i < static_cast<Single *>(t)->toByteArray().size() - 1; i++)
-								cout << static_cast<Single *>(t)->toByteArray()[i] << ", " << flush;
+								cout << (int)static_cast<Single *>(t)->toByteArray()[i] << ", " << flush;
 							cout << static_cast<Single *>(t)->toByteArray()[static_cast<Single *>(t)->toByteArray().size() - 1] << endl;
 							break;
 						case TagTypeIntArray:
@@ -196,6 +217,9 @@ class Array : public Tag, private vector<Tag *> {
 				else static_cast<Array *>(t)->print(lvl + 1);
 			}
 			
+			for (int i = 0; i < lvl; i++)
+				cout << "\t" << flush;
+			
 			cout << "}" << endl;
 		}
 	
@@ -205,10 +229,13 @@ class Array : public Tag, private vector<Tag *> {
 		// ----------------------------------------
 		size_t size() { return vector<Tag *>::size(); }
 		Tag *tag(size_t index) { return at(index); } // get a tag by its index (only useful for looping purposes since order in the array is not guaranteed)
+		ArrayType arrayType() { return m_arrayType; }
+		TagType listType() { return m_listType; }
 	
 	
 	private:
 		ArrayType m_arrayType;
+		TagType m_listType; // if the array is a list, the type of the list
 		iterator m_currPtr; // used in next() function, this pointer is used to act like a seek pointer
 	
 		// this function will check if the m_currPtr pointer has been modified
