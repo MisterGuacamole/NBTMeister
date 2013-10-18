@@ -32,7 +32,10 @@
 #include <vector>
 #include "../config.h"
 #include "../make_unique.h"
+#include "../tags/TagTypes.h"
 #include "../tags/Tag.h"
+#include "../tags/Single.h"
+#include "../tags/Array.h"
 
 using namespace std;
 
@@ -61,6 +64,11 @@ class Parser {
 		Parser() : m_status(good) {}
 	
 		Tag *build(memblock::iterator cursor, memblock::iterator end, feedback_fct feedback = nullptr) {
+			
+			if (cursor == end)
+				return nullptr;
+			
+			m_blockSize = distance(cursor, end);
 			return m_build(cursor, end, cursor, feedback);
 		}
 	
@@ -68,6 +76,7 @@ class Parser {
 		parser_status status() { return m_status; }
 	
 	private:
+		size_t m_blockSize;
 		typedef char byte;
 		parser_status m_status;
 	
@@ -107,8 +116,8 @@ class Parser {
 				
 				// get the length of the name
 				SINGLE_GETSHORT tagNameLength;
-				m_secureIncrement(cursor, end, reassign);
-				vector<byte> buff = m_makeBuffer<typeof(tagNameLength)>(cursor, end, reassign);
+				m_secureIncrement(cursor, end, reassign, feedback);
+				vector<byte> buff = m_makeBuffer<typeof(tagNameLength)>(cursor, end, reassign, feedback);
 				if (m_status != good)
 					return nullptr;
 				m_rehostEndianness<typeof(tagNameLength)>(tagNameLength, buff);
@@ -117,7 +126,7 @@ class Parser {
 				string tagName;
 				for (int i = 0; i < tagNameLength; i++) {
 					
-					m_secureIncrement(cursor, end, reassign); // fetch the next byte
+					m_secureIncrement(cursor, end, reassign, feedback); // fetch the next byte
 					if (m_status != good) // an error has occured
 						return nullptr;
 					
@@ -138,11 +147,11 @@ class Parser {
 				// making it recursive, to get the content of the compound/list. If the tag is, lets say, a
 				// string, we need to process the payload completely differently : first we read 2 bytes, getting
 				// the length of the real payload. We can then read it in its entirety.
-				m_secureIncrement(cursor, end, reassign);
+				m_secureIncrement(cursor, end, reassign, feedback);
 				if (m_status != good) // an error has occured
 					return nullptr;
 				
-				return m_readPayload(tagType, tagName, cursor, end, reassign);
+				return m_readPayload(tagType, tagName, cursor, end, reassign, feedback);
 			}
 			
 			return nullptr;
@@ -153,7 +162,12 @@ class Parser {
 		////////////////////////////////////////////////////////////////////////
 		// function that will read only the payload of the specified tag type //
 		////////////////////////////////////////////////////////////////////////
-		Tag *m_readPayload(TagType tagType, const string &tagName, memblock::iterator &cursor, memblock::iterator end, memblock::iterator &reassign) {
+		Tag *m_readPayload(TagType tagType,
+						   const string &tagName,
+						   memblock::iterator &cursor,
+						   memblock::iterator end,
+						   memblock::iterator &reassign,
+						   feedback_fct feedback) {
 			
 			
 			// ====================================================================
@@ -166,13 +180,13 @@ class Parser {
 					
 					// we get the type
 					TagType listTagType = static_cast<TagType>(*cursor);
-					m_secureIncrement(cursor, end, reassign);
+					m_secureIncrement(cursor, end, reassign, feedback);
 					
 					
 					// we get the length of the list
 					SINGLE_GETINT tagPayloadLength;
 					typedef typeof(tagPayloadLength) mtype;
-					vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+					vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 					if (m_status != good)
 						return nullptr;
 					m_rehostEndianness<mtype>(tagPayloadLength, buff);
@@ -183,11 +197,11 @@ class Parser {
 					Array *root = new Array(tagName, ArrayType::List, listTagType);
 					for (int i = 0; i < tagPayloadLength; i++) {
 						
-						m_secureIncrement(cursor, end, reassign);
+						m_secureIncrement(cursor, end, reassign, feedback);
 						if (m_status != good) // an error has occured
 							return nullptr;
 						
-						Tag *ret = m_readPayload(listTagType, "", cursor, end, reassign);
+						Tag *ret = m_readPayload(listTagType, "", cursor, end, reassign, feedback);
 						root->addTag(ret);
 					}
 					return root;
@@ -195,9 +209,9 @@ class Parser {
 				else {
 					
 					Array *root = new Array(tagName, ArrayType::Compound);
-					while (Tag *ret = m_build(cursor, end, cursor)) { // Recursion. This will get us a root tag to add to our array
+					while (Tag *ret = m_build(cursor, end, cursor, feedback)) { // Recursion. This will get us a root tag to add to our array
 						root->addTag(ret);
-						m_secureIncrement(cursor, end, reassign);
+						m_secureIncrement(cursor, end, reassign, feedback);
 					}
 					return root;
 				}
@@ -215,7 +229,7 @@ class Parser {
 				// the desired type
 				SINGLE_GETSHORT tagPayloadLength;
 				typedef typeof(tagPayloadLength) mtype;
-				vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+				vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 				if (m_status != good)
 					return nullptr;
 				m_rehostEndianness<mtype>(tagPayloadLength, buff);
@@ -223,7 +237,7 @@ class Parser {
 				string tagPayload;
 				for (int i = 0; i < tagPayloadLength; i++) {
 					
-					m_secureIncrement(cursor, end, reassign); // fetch the next byte
+					m_secureIncrement(cursor, end, reassign, feedback); // fetch the next byte
 					if (m_status != good) // an error has occured
 						return nullptr;
 					
@@ -245,7 +259,7 @@ class Parser {
 				
 				SINGLE_GETINT tagPayloadLength;
 				typedef typeof(tagPayloadLength) mtype;
-				vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+				vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 				if (m_status != good)
 					return nullptr;
 				m_rehostEndianness<mtype>(tagPayloadLength, buff);
@@ -255,7 +269,7 @@ class Parser {
 					vector<SINGLE_GETBYTE> tagPayload;
 					for (int i = 0; i < tagPayloadLength; i++) {
 						
-						m_secureIncrement(cursor, end, reassign);
+						m_secureIncrement(cursor, end, reassign, feedback);
 						if (m_status != good) // an error has occured
 							return nullptr;
 						tagPayload.push_back(*cursor);
@@ -268,9 +282,11 @@ class Parser {
 					vector<SINGLE_GETINT> array;
 					for (int i = 0; i < tagPayloadLength; i++) {
 						
+						m_secureIncrement(cursor, end, reassign, feedback);
+						
 						SINGLE_GETINT tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -311,7 +327,7 @@ class Parser {
 						// the desired type
 						SINGLE_GETSHORT tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -328,7 +344,7 @@ class Parser {
 						// the desired type
 						SINGLE_GETINT tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -345,7 +361,7 @@ class Parser {
 						// the desired type
 						SINGLE_GETLONG tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -362,7 +378,7 @@ class Parser {
 						// the desired type
 						SINGLE_GETFLOAT tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -379,7 +395,7 @@ class Parser {
 						// the desired type
 						SINGLE_GETDOUBLE tagPayload;
 						typedef typeof(tagPayload) mtype;
-						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign);
+						vector<byte> buff = m_makeBuffer<mtype>(cursor, end, reassign, feedback);
 						if (m_status != good)
 							return nullptr;
 						m_rehostEndianness<mtype>(tagPayload, buff);
@@ -394,21 +410,25 @@ class Parser {
 			}
 		}
 	
-		// increment the iterator if possible
-		void m_secureIncrement(memblock::iterator &mov, memblock::iterator lim, memblock::iterator &reassign) {
+		// increment the iterator if possible, and send feedback
+		void m_secureIncrement(memblock::iterator &mov, memblock::iterator lim, memblock::iterator &reassign, feedback_fct feedback) {
+			
 			if (mov == lim)
 				m_status = null_iterator;
 			mov++;
 			reassign = mov;
+			
+			if (feedback)
+				feedback((m_blockSize - distance(mov, lim)) / (double)m_blockSize);
 		}
 	
 		template <typename T>
-		vector<byte> m_makeBuffer(memblock::iterator &mov, memblock::iterator lim, memblock::iterator &reassign) {
+		vector<byte> m_makeBuffer(memblock::iterator &mov, memblock::iterator lim, memblock::iterator &reassign, feedback_fct feedback) {
 			
 			vector<byte> buff;
 			for (int i = 0; i < sizeof(T); i++) {
 				buff.push_back(*mov);
-				if (i < sizeof(T) - 1) m_secureIncrement(mov, lim, reassign);
+				if (i < sizeof(T) - 1) m_secureIncrement(mov, lim, reassign, feedback);
 			}
 			
 			return buff;
