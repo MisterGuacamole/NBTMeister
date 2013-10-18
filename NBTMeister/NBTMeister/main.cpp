@@ -26,50 +26,61 @@
  */
 
 #include <iostream>
+#include <sstream>
+#include "file-op/MinecraftRegion.h"
 #include "tags/Single.h"
 #include "tags/Array.h"
-#include "tree-op/Parser.h"
+#include "file-op/Parser.h"
 #include "libs/zlib-contrib/zfstream.h"
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
 	
-	cout << "Test zlib...\nDecompressing file..." << endl;
-	
-	gzofstream outf;
-	gzifstream inf;
-	
-	std::cout << "\nReading 'test.nbt' (buffered) produces:\n";
-	inf.open("../../NBTMeister/tests/bigtest.nbt", ios::binary);
-	if (!inf.is_open()) {
-		cout << "Cannot open file" << endl;
-		return 0;
+	Region reg;
+	reg.open("/Users/MAB/Desktop/ProjetMinecraft/NBTMeister/NBTMeister/NBTMeister/tests/NBTMeisterTestWorld/region/r.0.0.mca");//"../../NBTMeister/tests/NBTMeisterTestWorld/region/r.0.0.mca");
+	if (!reg.good()) {
+		cerr << "[Error] cannot open file" << endl;
+		return EXIT_FAILURE;
 	}
 	
-	const unsigned int chunkSize = 2048;
+	reg.mapChunks();
 	
-	memblock collectedData(chunkSize);
-	inf.read(&collectedData[0], chunkSize);
-	inf.close();
-	
-	for (int i = 0; i < chunkSize; i++) {
-		cout << (unsigned int)collectedData[i];
-	}
-	cout << "\n***\n\n" << endl;
-	
-	// ---------------------------------
-	cout << "Building tree..." << flush;
-	Parser parser;
-	Tag *tree = parser.build(collectedData.begin(), collectedData.end());
-	
-	cout << "\n" << endl;
-	
-	if (parser.status() != parser_status::good)
-		cerr << "\n[Error] parser error 0x" << parser.status() << endl;
-	
-	static_cast<Array *>(tree)->print();
-	delete tree;
+//	cout << "Test zlib...\nDecompressing file..." << endl;
+//	
+//	gzofstream outf;
+//	gzifstream inf;
+//	
+//	std::cout << "\nReading 'test.nbt' (buffered) produces:\n";
+//	inf.open("../../NBTMeister/tests/bigtest.nbt", ios::binary);
+//	if (!inf.is_open()) {
+//		cout << "Cannot open file" << endl;
+//		return 0;
+//	}
+//	
+//	const unsigned int chunkSize = 2048;
+//	
+//	memblock collectedData(chunkSize);
+//	inf.read(&collectedData[0], chunkSize);
+//	inf.close();
+//	
+//	for (int i = 0; i < chunkSize; i++) {
+//		cout << (unsigned int)collectedData[i];
+//	}
+//	cout << "\n***\n\n" << endl;
+//	
+//	// ---------------------------------
+//	cout << "Building tree..." << flush;
+//	Parser parser;
+//	Tag *tree = parser.build(collectedData.begin(), collectedData.end());
+//	
+//	cout << "\n" << endl;
+//	
+//	if (parser.status() != parser_status::good)
+//		cerr << "\n[Error] parser error 0x" << parser.status() << endl;
+//	
+//	static_cast<Array *>(tree)->print();
+//	delete tree;
 	
     return 0;
 }

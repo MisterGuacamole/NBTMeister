@@ -25,12 +25,20 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0802E6101800803600E21728 /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		083D759817FF9FC8009FC03F /* libz.1.2.8.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.8.dylib; path = ../../../../../../usr/local/lib/libz.1.2.8.dylib; sourceTree = "<group>"; };
 		083D759E17FFA31D009FC03F /* zfstream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = zfstream.cpp; sourceTree = "<group>"; };
 		083D759F17FFA31D009FC03F /* zfstream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zfstream.h; sourceTree = "<group>"; };
+		0851E80F180996A9008BC9B9 /* MinecraftRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MinecraftRegion.h; path = "NBTMeister/file-op/MinecraftRegion.h"; sourceTree = SOURCE_ROOT; };
+		0851E8121809A3ED008BC9B9 /* villages.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = villages.dat; sourceTree = "<group>"; };
+		0851E8131809A3ED008BC9B9 /* level.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = level.dat; sourceTree = "<group>"; };
+		0851E8141809A3ED008BC9B9 /* level.dat_mcr */ = {isa = PBXFileReference; lastKnownFileType = file; path = level.dat_mcr; sourceTree = "<group>"; };
+		0851E8151809A3ED008BC9B9 /* level.dat_old */ = {isa = PBXFileReference; lastKnownFileType = file; path = level.dat_old; sourceTree = "<group>"; };
+		0851E8171809A3ED008BC9B9 /* r.0.-1.mca */ = {isa = PBXFileReference; lastKnownFileType = file; path = "r.0.-1.mca"; sourceTree = "<group>"; };
+		0851E8181809A3ED008BC9B9 /* r.0.0.mca */ = {isa = PBXFileReference; lastKnownFileType = file; path = r.0.0.mca; sourceTree = "<group>"; };
+		0851E8191809A3ED008BC9B9 /* r.1.-1.mca */ = {isa = PBXFileReference; lastKnownFileType = file; path = "r.1.-1.mca"; sourceTree = "<group>"; };
+		0851E81A1809A3ED008BC9B9 /* r.1.0.mca */ = {isa = PBXFileReference; lastKnownFileType = file; path = r.1.0.mca; sourceTree = "<group>"; };
 		08860F2E17FF751700C9916A /* NBTMeister */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NBTMeister; sourceTree = BUILT_PRODUCTS_DIR; };
-		08860FD217FF764F00C9916A /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		08860FD217FF764F00C9916A /* config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = config.h; sourceTree = "<group>"; };
 		08860FD317FF764F00C9916A /* fixedendian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fixedendian.h; sourceTree = "<group>"; };
 		08860FD617FF764F00C9916A /* collection.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = collection.hpp; sourceTree = "<group>"; };
 		08860FD717FF764F00C9916A /* config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = config.hpp; sourceTree = "<group>"; };
@@ -72,6 +80,7 @@
 		0886100717FF764F00C9916A /* TagTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TagTypes.h; sourceTree = "<group>"; };
 		0886100917FF764F00C9916A /* bigtest.nbt */ = {isa = PBXFileReference; lastKnownFileType = file; path = bigtest.nbt; sourceTree = "<group>"; };
 		0886100A17FF764F00C9916A /* test.nbt */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.nbt; sourceTree = "<group>"; };
+		08C1B2E6180B0DC0004948F9 /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = "NBTMeister/file-op/Parser.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,11 +95,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0802E60F18007FB000E21728 /* tree-op */ = {
+		0802E60F18007FB000E21728 /* file-op */ = {
 			isa = PBXGroup;
 			children = (
-				0802E6101800803600E21728 /* Parser.h */,
+				08C1B2E6180B0DC0004948F9 /* Parser.h */,
+				0851E80F180996A9008BC9B9 /* MinecraftRegion.h */,
 			);
+			name = "file-op";
 			path = "tree-op";
 			sourceTree = "<group>";
 		};
@@ -101,6 +112,37 @@
 				083D759F17FFA31D009FC03F /* zfstream.h */,
 			);
 			path = "zlib-contrib";
+			sourceTree = "<group>";
+		};
+		0851E8101809A3ED008BC9B9 /* NBTMeisterTestWorld */ = {
+			isa = PBXGroup;
+			children = (
+				0851E8111809A3ED008BC9B9 /* data */,
+				0851E8131809A3ED008BC9B9 /* level.dat */,
+				0851E8141809A3ED008BC9B9 /* level.dat_mcr */,
+				0851E8151809A3ED008BC9B9 /* level.dat_old */,
+				0851E8161809A3ED008BC9B9 /* region */,
+			);
+			path = NBTMeisterTestWorld;
+			sourceTree = "<group>";
+		};
+		0851E8111809A3ED008BC9B9 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				0851E8121809A3ED008BC9B9 /* villages.dat */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		0851E8161809A3ED008BC9B9 /* region */ = {
+			isa = PBXGroup;
+			children = (
+				0851E8171809A3ED008BC9B9 /* r.0.-1.mca */,
+				0851E8181809A3ED008BC9B9 /* r.0.0.mca */,
+				0851E8191809A3ED008BC9B9 /* r.1.-1.mca */,
+				0851E81A1809A3ED008BC9B9 /* r.1.0.mca */,
+			);
+			path = region;
 			sourceTree = "<group>";
 		};
 		08860F2517FF751700C9916A = {
@@ -128,7 +170,7 @@
 				08860FD217FF764F00C9916A /* config.h */,
 				0886100017FF764F00C9916A /* make_unique.h */,
 				08860FD317FF764F00C9916A /* fixedendian.h */,
-				0802E60F18007FB000E21728 /* tree-op */,
+				0802E60F18007FB000E21728 /* file-op */,
 				0886100217FF764F00C9916A /* tags */,
 				0886100817FF764F00C9916A /* tests */,
 				08860FD417FF764F00C9916A /* libs */,
@@ -279,6 +321,7 @@
 			children = (
 				0886100917FF764F00C9916A /* bigtest.nbt */,
 				0886100A17FF764F00C9916A /* test.nbt */,
+				0851E8101809A3ED008BC9B9 /* NBTMeisterTestWorld */,
 			);
 			path = tests;
 			sourceTree = "<group>";
