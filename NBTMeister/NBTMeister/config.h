@@ -43,7 +43,8 @@
 #endif
 
 
-/* Allow/Disallow the use of FixedEndian objects */
+// General config for compilation
 #define NBTMEISTER_FORCE_LITTLE_ENDIAN
+//#define NBTMEISTER_USE_MINECRAFT_NAMESPACE
 
 #endif
